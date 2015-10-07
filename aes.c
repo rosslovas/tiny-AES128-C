@@ -465,8 +465,13 @@ void AES128_ECB_encrypt(uint8_t* input, const uint8_t* key, uint8_t* output)
   BlockCopy(output, input);
   state = (state_t*)output;
 
-  Key = key;
-  KeyExpansion();
+  // The KeyExpansion routine must be called before encryption.
+  // Skip the key expansion if key is passed as 0
+  if(0 != key)
+  {
+    Key = key;
+    KeyExpansion();
+  }
 
   // The next function call encrypts the PlainText with the Key using AES algorithm.
   Cipher();
@@ -478,9 +483,12 @@ void AES128_ECB_decrypt(uint8_t* input, const uint8_t* key, uint8_t *output)
   BlockCopy(output, input);
   state = (state_t*)output;
 
-  // The KeyExpansion routine must be called before encryption.
-  Key = key;
-  KeyExpansion();
+  // Skip the key expansion if key is passed as 0
+  if(0 != key)
+  {
+    Key = key;
+    KeyExpansion();
+  }
 
   InvCipher();
 }
